@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+    <display-name>Sapphire</display-name>
+    
+    <context-param>
+        <param-name>log4j.properties</param-name>
+        <param-value>/WEB-INF/log/log4j.properties</param-value>
+    </context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <!--<param-value>classpath:spring-mvc.xml,classpath*:com/family/**/spring*.xml</param-value>-->
+         <param-value>classpath:spring.xml,classpath*:com/family/**/spring*.xml</param-value>
+    </context-param>
+    
+    <listener>
+        <listener-class>com.family.base01.util.LogListener</listener-class>
+    </listener>
+    
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+    <listener>
+        <listener-class>org.lpw.wormhole.servlet.WormholeContextListener</listener-class>
+    </listener>
+    
+    <listener>
+        <listener-class>com.family.demotest.common.queue.QueueDataListener</listener-class>
+    </listener>
+    
+	<!-- 初始化监听器 -->
+    <listener>
+        <listener-class>com.family.demotest.common.listener.InitListener</listener-class>
+    </listener>
+    
+	  <!-- 配置SpringMVC -->
+	  <servlet>
+	  	<servlet-name>springMVC</servlet-name>
+	  	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	  	<init-param>
+	  		<param-name>contextConfigLocation</param-name>
+	  		<param-value>classpath*:spring-mvc.xml</param-value>
+	  	</init-param>
+	  	<load-on-startup>1</load-on-startup>
+	  </servlet>
+	  <servlet-mapping>
+	  	<servlet-name>springMVC</servlet-name>
+	  	<url-pattern>/</url-pattern>
+	  </servlet-mapping>
+	  
+    <!-- DAO过滤器，用于在每次访问结束后自动关闭数据库连接。 -->
+    <filter>
+        <filter-name>DaoFilter</filter-name>
+        <filter-class> com.family.base01.dao.DaoFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>DaoFilter</filter-name>
+        <url-pattern>*.service</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>DaoFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+
+    
+	  <!-- 配置字符集 -->
+	  <filter>
+	  	<filter-name>encodingFilter</filter-name>
+	  	<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	  	<init-param>
+	  		<param-name>encoding</param-name>
+	  		<param-value>UTF-8</param-value>
+	  	</init-param>
+	  	<init-param>
+	  		<param-name>forceEncoding</param-name>
+	  		<param-value>true</param-value>
+	  	</init-param>
+	  </filter>
+	  <filter-mapping>
+	  	<filter-name>encodingFilter</filter-name>
+	  	<url-pattern>/*</url-pattern>
+	  </filter-mapping>
+    
+    <servlet>
+        <servlet-name>RemoteCacheServlet</servlet-name>
+        <servlet-class>org.lpw.wormhole.servlet.RemoteCacheServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RemoteCacheServlet</servlet-name>
+        <url-pattern>/cache/remote</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>RemoteQueueServlet</servlet-name>
+        <servlet-class>org.lpw.wormhole.servlet.RemoteQueueServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RemoteQueueServlet</servlet-name>
+        <url-pattern>/queue/remote</url-pattern>
+    </servlet-mapping>
+
+    <error-page>
+        <error-code>404</error-code>     
+        <location>/404.jsp</location>     
+    </error-page>
+</web-app>
